@@ -15,30 +15,46 @@ LDFLAGS="-L$WORKSPACE/FFmpeg/lib"
 NUMCORES=$(nproc --all)
 
 make_workspace() {
-   mkdir -p $WORKSPACE
+    mkdir -p $WORKSPACE
 }
 
-build_etterna_linux() {
-   git clone $FFMPEG_REPO
-   cd FFmpeg
-   git checkout $BRANCH
+generic_build() {
+    git clone $FFMPEG_REPO
+    cd FFmpeg
+    git checkout $BRANCH
 
 
-   if [ "$(uname -m)"  == "x86" ]; then
-	FFMPEG_FLAGS+='--extra-cflags="-m32" --extra-ldflags="-m32"'
-   fi
+    ./configure --prefix="$WORKSPACE" \
+        $FFMPEG_FLAGS \
+        --ld="g++" \
+        --extra-cflags="${CFLAGS}" \
+        --extra-ldflags="${LDFLAGS}" \
+        --pkgconfigdir="$WORKSPACE/FFmpeg/lib/pkgconfig" \
+        --pkg-config-flags="--static"
 
-   ./configure --prefix="$WORKSPACE" \
-	   $FFMPEG_FLAGS \
-	   --extra-cflags="${CFLAGS}" \
-	   --extra-ldflags="${LDFLAGS}" \
-	   --pkgconfigdir="$WORKSPACE/FFmpeg/lib/pkgconfig" \
-	   --pkg-config-flags="--static" \
+    make -j $NUMCORES
+    make install
+}
 
-   make -j $NUMCORES
-   make install
+linux_build() {
+    if [ "$(uname -m)"  == "x86" ]; then
+        FFMPEG_FLAGS+='--extra-cflags="-m32" --extra-ldflags="-m32"'
+    fi
+    generic_build
+}
+
+windows_build() {
+    if [ $1 == "x86" ]; then
+        FFMPEG_FLAGS+='--arch=x86 --target-os=mingw32 --cross-prefix=i686-w64-mingw32-'
+    elif [ $1 == "x86_64" ]; then
+        FFMPEG_FLAGS+='--arch=x86_64 --target-os=mingw32 --cross-prefix=x86_64-w64-mingw32-'
+    else
+        echo "Invalid parameter to windows_build, only x86 and x86_64 are accepted - you put in $1"
+        exit
+    fi
+    generic_build
 }
 
 make_workspace
 cd workspace
-build_etterna_linux
+linux_build
