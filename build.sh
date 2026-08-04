@@ -45,9 +45,9 @@ linux_build() {
 
 windows_build() {
     if [ $1 == "x86" ]; then
-        FFMPEG_FLAGS+='--arch=x86 --target-os=mingw32 --cross-prefix=i686-w64-mingw32-'
+        FFMPEG_FLAGS+='--arch=x86 --target-os=mingw32 --cross-prefix=i686-w64-mingw32'
     elif [ $1 == "x86_64" ]; then
-        FFMPEG_FLAGS+='--arch=x86_64 --target-os=mingw32 --cross-prefix=x86_64-w64-mingw32-'
+        FFMPEG_FLAGS+='--arch=x86_64 --target-os=mingw32 --cross-prefix=x86_64-w64-mingw32'
     else
         echo "Invalid parameter to windows_build, only x86 and x86_64 are accepted - you put in $1"
         exit
