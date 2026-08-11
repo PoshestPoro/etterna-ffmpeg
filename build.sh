@@ -1,12 +1,11 @@
 #!/bin/bash
 
-# NOTE: This includes 32bit installation flags if we ever need them
-
-# May be able to minimise these flags
+# TODO: May be able to minimise these flags
 FFMPEG_FLAGS+="--disable-static --enable-shared --enable-gpl --enable-version3 --disable-w32threads --enable-bzlib --enable-fontconfig --enable-gnutls --enable-iconv --enable-libfreetype --enable-libgsm --enable-librtmp --enable-libtheora --enable-libtwolame --enable-libvidstab --enable-libvpx --enable-libx264 --enable-libxvid --enable-zlib"
 
 # Change these to update ffmpeg
-BRANCH="release/8.1"
+FFMPEG_VERSION="8.1"
+BRANCH="release/${FFMPEG_VERSION}"
 FFMPEG_REPO="https://github.com/FFmpeg/FFmpeg"
 CWD=$(pwd)
 WORKSPACE="$CWD/workspace"
@@ -28,7 +27,7 @@ generic_build() {
 
     ./configure --prefix="$WORKSPACE" \
         $FFMPEG_FLAGS \
-        --ld="g++" \
+        --ld="$CXX" \
         --extra-cflags="${CFLAGS}" \
         --extra-ldflags="${LDFLAGS}" \
         --pkgconfigdir="$WORKSPACE/FFmpeg/lib/pkgconfig" \
