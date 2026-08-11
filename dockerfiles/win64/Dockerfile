@@ -26,10 +26,12 @@ RUN \
     rm -rf /var/lib/apt/lists/*
 
 ENV FFBUILD_TOOLCHAIN=x86_64-w64-mingw32
+ENV ARCHITECTURE=x86_64
 
 ENV PATH="/opt/ct-ng/bin:${PATH}" \
     CC="${FFBUILD_TOOLCHAIN}-gcc" \
     CXX="${FFBUILD_TOOLCHAIN}-g++" \
     LD="${FFBUILD_TOOLCHAIN}-ld" \
-    AR="${FFBUILD_TOOLCHAIN}-gcc-ar" 
+    AR="${FFBUILD_TOOLCHAIN}-gcc-ar" \
+    FFMPEG_FLAGS="--arch=${ARCHITECTURE} --target-os=mingw32 --cross-prefix=${FFBUILD_TOOLCHAIN}"
 
